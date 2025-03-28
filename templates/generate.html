@@ -8,8 +8,9 @@
     <div class="container">
         <h1>Generate Ad Copy using LLM</h1>
         <nav>
-            <a href="{{ url_for('index') }}">Home</a> | 
-            <a href="{{ url_for('schedule') }}">Schedule a Campaign</a>
+            <a href="{{ url_for('index') }}">Home</a> |
+            <a href="{{ url_for('schedule') }}">Schedule Manually</a> |
+            <a href="{{ url_for('upload') }}">Upload Schedule Document</a>
         </nav>
         <form action="{{ url_for('generate') }}" method="POST">
             <label for="prompt">Enter your prompt:</label><br>
@@ -17,14 +18,16 @@
             <label for="model">Select Model:</label><br>
             <select id="model" name="model">
                 <option value="phi4">phi4</option>
+                <option value="mistral">mistral</option>
                 <option value="llama3.2" selected>llama3.2</option>
+                <option value="gemma3">gemma3</option>
                 <option value="deepseek-r1:8b">deepseek-r1:8b</option>
             </select><br><br>
             <button type="submit">Generate</button>
         </form>
         {% if generated_text %}
         <h2>Generated Ad Copy:</h2>
-        <p>{{ generated_text }}</p>
+        <pre>{{ generated_text }}</pre>
         {% endif %}
     </div>
 </body>
