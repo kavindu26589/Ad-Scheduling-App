@@ -63,7 +63,7 @@ def schedule():
         flash('Ad campaign scheduled successfully.')
         logging.info(f"Scheduled new campaign: {name}")
 
-        # (Optional) Perform additional analysis if needed.
+        # (Optional) Additional analysis can be done here.
         return redirect(url_for('index'))
     return render_template('schedule.html')
 
@@ -125,7 +125,7 @@ def generate():
 def health():
     return jsonify({"status": "ok"})
 
-# Dummy web search module (for demonstration).
+# Dummy web search endpoint for demonstration.
 @app.route('/websearch')
 def websearch():
     query = request.args.get('query', 'future programs')
