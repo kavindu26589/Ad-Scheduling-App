@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Ad Copy</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Generate Ad Copy using LLM</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a> | 
+            <a href="{{ url_for('schedule') }}">Schedule a Campaign</a>
+        </nav>
+        <form action="{{ url_for('generate') }}" method="POST">
+            <label for="prompt">Enter your prompt:</label><br>
+            <textarea id="prompt" name="prompt" rows="4" cols="50" required></textarea><br><br>
+            <label for="model">Select Model:</label><br>
+            <select id="model" name="model">
+                <option value="phi4">phi4</option>
+                <option value="llama3.2" selected>llama3.2</option>
+                <option value="deepseek-r1:8b">deepseek-r1:8b</option>
+            </select><br><br>
+            <button type="submit">Generate</button>
+        </form>
+        {% if generated_text %}
+        <h2>Generated Ad Copy:</h2>
+        <p>{{ generated_text }}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
