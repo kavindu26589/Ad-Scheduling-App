@@ -2,16 +2,15 @@ import subprocess
 import sys
 import logging
 
-# List of available LLM models installed on your local machine.
+# Approved LLM models installed on your local machine.
 LLM_MODELS = [
     "phi4",
-    #"mistral",  # Not enabled currently
+    "mistral",
     "llama3.2",
-    #"gemma3",  # Not enabled currently
+    "gemma3",
     "deepseek-r1:8b"
 ]
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 
 def call_ollama_sync(model: str, prompt: str) -> str:
@@ -39,16 +38,16 @@ def call_ollama_sync(model: str, prompt: str) -> str:
         return f"Error calling {model}: {e.stderr}"
 
 def generate_ad_copy(prompt: str, model: str = "llama3.2") -> str:
-    """Generate ad copy using the specified model via Ollama.
+    """Generate text using the specified model via Ollama.
     
     Args:
-        prompt (str): The prompt for generating ad copy.
+        prompt (str): The prompt for the LLM.
         model (str): The name of the model to use.
         
     Returns:
-        str: The generated ad copy or an error message.
+        str: The generated text or an error message.
     """
     if model not in LLM_MODELS:
         return f"Model '{model}' is not available. Please select a valid model."
-    logging.info(f"Generating ad copy using model: {model}")
+    logging.info(f"Generating text using model: {model}")
     return call_ollama_sync(model, prompt)
