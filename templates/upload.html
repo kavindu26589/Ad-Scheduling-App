@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Ad Schedule Document</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Ad Schedule Document</h1>
+        <nav>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="{{ url_for('schedule') }}">Schedule Manually</a>
+            <a href="{{ url_for('generate') }}">Generate Ad Copy</a>
+        </nav>
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <ul class="flashes">
+              {% for message in messages %}
+                <li>{{ message }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        {% endwith %}
+        <form action="{{ url_for('upload') }}" method="POST" enctype="multipart/form-data">
+            <label for="schedule_file">Choose a document (Excel, PDF, DOCX, TXT):</label><br>
+            <input type="file" id="schedule_file" name="schedule_file" required><br><br>
+            <button type="submit">Upload and Process</button>
+        </form>
+    </div>
+</body>
+</html>
