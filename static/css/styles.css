@@ -12,7 +12,7 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+h1, h2, h3 {
     color: #333;
 }
 
@@ -45,4 +45,11 @@ th, td {
     list-style-type: none;
     padding: 0;
     color: red;
+}
+
+pre {
+    background: #eee;
+    padding: 10px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
