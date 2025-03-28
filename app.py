@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, flash, jso
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import logging
-from llm_integration import generate_ad_copy
+from llm_integration import generate_ad_copy, LLM_MODELS
+from web_search import perform_web_search
+from document_processing import process_schedule_document
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ads.db'
@@ -47,7 +49,7 @@ def schedule():
         if end_date < start_date:
             flash('End date cannot be before start date.')
             return redirect(url_for('schedule'))
-        # Check for scheduling conflicts
+        # Check for scheduling conflicts.
         conflict = AdCampaign.query.filter(
             AdCampaign.end_date >= start_date,
             AdCampaign.start_date <= end_date
@@ -60,8 +62,54 @@ def schedule():
         db.session.commit()
         flash('Ad campaign scheduled successfully.')
         logging.info(f"Scheduled new campaign: {name}")
+
+        # (Optional) Perform additional analysis if needed.
         return redirect(url_for('index'))
     return render_template('schedule.html')
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    if request.method == 'POST':
+        if 'schedule_file' not in request.files:
+            flash("No file part in the request.")
+            return redirect(url_for('upload'))
+        file = request.files['schedule_file']
+        if file.filename == "":
+            flash("No file selected.")
+            return redirect(url_for('upload'))
+        campaigns_data = process_schedule_document(file)
+        inserted_campaigns = []
+        conflict_campaigns = []
+        for campaign in campaigns_data:
+            name = campaign.get('name')
+            start_date_str = campaign.get('start_date')
+            end_date_str = campaign.get('end_date')
+            try:
+                start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+            except Exception as e:
+                logging.error(f"Error parsing dates for campaign '{name}': {e}")
+                conflict_campaigns.append(name)
+                continue
+            if end_date < start_date:
+                conflict_campaigns.append(name)
+                continue
+            conflict = AdCampaign.query.filter(
+                AdCampaign.end_date >= start_date,
+                AdCampaign.start_date <= end_date
+            ).first()
+            if conflict:
+                conflict_campaigns.append(name)
+                continue
+            new_campaign = AdCampaign(name=name, start_date=start_date, end_date=end_date)
+            db.session.add(new_campaign)
+            inserted_campaigns.append(new_campaign)
+        db.session.commit()
+        flash(f"Inserted campaigns: {', '.join([c.name for c in inserted_campaigns])}")
+        if conflict_campaigns:
+            flash(f"Skipped campaigns due to conflicts or errors: {', '.join(conflict_campaigns)}")
+        return redirect(url_for('index'))
+    return render_template('upload.html')
 
 @app.route('/generate', methods=['GET', 'POST'])
 def generate():
@@ -76,6 +124,14 @@ def generate():
 @app.route('/health')
 def health():
     return jsonify({"status": "ok"})
+
+# Dummy web search module (for demonstration).
+@app.route('/websearch')
+def websearch():
+    query = request.args.get('query', 'future programs')
+    from web_search import perform_web_search
+    results = perform_web_search(query)
+    return results
 
 if __name__ == '__main__':
     app.run(debug=True)
