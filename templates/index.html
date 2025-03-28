@@ -8,7 +8,8 @@
     <div class="container">
         <h1>Ad Campaigns</h1>
         <nav>
-            <a href="{{ url_for('schedule') }}">Schedule a New Campaign</a> | 
+            <a href="{{ url_for('schedule') }}">Schedule Manually</a> | 
+            <a href="{{ url_for('upload') }}">Upload Schedule Document</a> | 
             <a href="{{ url_for('generate') }}">Generate Ad Copy</a>
         </nav>
         {% with messages = get_flashed_messages() %}
